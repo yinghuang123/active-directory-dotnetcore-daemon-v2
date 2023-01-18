@@ -51,29 +51,33 @@ namespace daemon_console
 
             if (isUsingClientSecret)
             {
+                Console.WriteLine("isUsingClientSecret --> " + isUsingClientSecret);
                 // Even if this is a console application here, a daemon application is a confidential client application
                 app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
-                    .WithClientSecret(config.ClientSecret)
-                    .WithAuthority(new Uri(config.Authority))
-                    .Build();
+                      .WithClientSecret(config.ClientSecret)
+                      .WithAuthority(new Uri(config.Authority))
+                      .Build();
             }
 
             else
             {
                 ICertificateLoader certificateLoader = new DefaultCertificateLoader();
+                Console.WriteLine("certificateLoader  --> 1 " + certificateLoader);
                 certificateLoader.LoadIfNeeded(config.Certificate);
+                Console.WriteLine("certificateLoader  --> 2 " + certificateLoader);
 
                 app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
-                    .WithCertificate(config.Certificate.Certificate)
-                    .WithAuthority(new Uri(config.Authority))
-                    .Build();
+                      .WithCertificate(config.Certificate.Certificate)
+                      .WithAuthority(new Uri(config.Authority))
+                      .Build();
+                Console.WriteLine("certificateLoader  --> 3 " + certificateLoader);
             }
 
             app.AddInMemoryTokenCache();
 
-            // With client credentials flows the scopes is ALWAYS of the shape "resource/.default", as the 
+            // With client credentials flows the scopes is ALWAYS of the shape "resource/.default", as the
             // application permissions need to be set statically (in the portal or by PowerShell), and then granted by
-            // a tenant administrator. 
+            // a tenant administrator.
             string[] scopes = new string[] { $"{config.ApiUrl}.default" }; // Generates a scope -> "https://graph.microsoft.com/.default"
 
             // Call MS graph using the Graph SDK
@@ -96,7 +100,7 @@ namespace daemon_console
             try
             {
                 result = await app.AcquireTokenForClient(scopes)
-                    .ExecuteAsync();
+                         .ExecuteAsync();
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Token acquired");
@@ -111,7 +115,7 @@ namespace daemon_console
                 Console.ResetColor();
             }
 
-            // The following example uses a Raw Http call 
+            // The following example uses a Raw Http call
             if (result != null)
             {
                 var httpClient = new HttpClient();
@@ -139,7 +143,7 @@ namespace daemon_console
             {
 
                 IGraphServiceUsersCollectionPage users = await graphServiceClient.Users.Request().GetAsync();
-                Console.WriteLine($"Found {users.Count()} users in the tenant"); 
+                Console.WriteLine($"Found {users.Count()} users in the tenant");
             }
             catch (ServiceException e)
             {
@@ -148,25 +152,25 @@ namespace daemon_console
 
         }
 
-  
+
         /// <summary>
         /// An example of how to authenticate the Microsoft Graph SDK using the MSAL library
         /// </summary>
         /// <returns></returns>
         private static GraphServiceClient GetAuthenticatedGraphClient(IConfidentialClientApplication app, string[] scopes)
-        {            
+        {
 
             GraphServiceClient graphServiceClient =
-                    new GraphServiceClient("https://graph.microsoft.com/V1.0/", new DelegateAuthenticationProvider(async (requestMessage) =>
-                    {
-                        // Retrieve an access token for Microsoft Graph (gets a fresh token if needed).
-                        AuthenticationResult result = await app.AcquireTokenForClient(scopes)
-                            .ExecuteAsync();
+                new GraphServiceClient("https://graph.microsoft.com/V1.0/", new DelegateAuthenticationProvider(async (requestMessage) =>
+            {
+                // Retrieve an access token for Microsoft Graph (gets a fresh token if needed).
+                AuthenticationResult result = await app.AcquireTokenForClient(scopes)
+                                              .ExecuteAsync();
 
-                        // Add the access token in the Authorization header of the API request.
-                        requestMessage.Headers.Authorization =
-                            new AuthenticationHeaderValue("Bearer", result.AccessToken);
-                    }));
+                // Add the access token in the Authorization header of the API request.
+                requestMessage.Headers.Authorization =
+                    new AuthenticationHeaderValue("Bearer", result.AccessToken);
+            }));
 
             return graphServiceClient;
         }
@@ -182,7 +186,7 @@ namespace daemon_console
 
             foreach (JsonObject aNode in nodes.ToArray())
             {
-                foreach(var property in aNode.ToArray())
+                foreach (var property in aNode.ToArray())
                 {
                     Console.WriteLine($"{property.Key} = {property.Value?.ToString()}");
                 }
