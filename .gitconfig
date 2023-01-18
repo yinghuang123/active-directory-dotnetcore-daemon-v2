@@ -2,7 +2,7 @@
     url = git@github.com:Azure-Samples/active-directory-dotnetcore-daemon-v2.git
     fetch = +refs/heads/*:refs/remotes/Azure-Samples/*
 [remote "origin"]
-    url = git@github.com:huangyingw/Azure-Samples_active-directory-dotnetcore-daemon-v2.git
+    url = git@github.com:yinghuang123/active-directory-dotnetcore-daemon-v2.git
     fetch = +refs/heads/*:refs/remotes/origin/*
 [push]
     remote = origin
